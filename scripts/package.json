@@ -1,0 +1,17 @@
+{
+  "name": "scripts",
+  "module": "src/index.ts",
+  "type": "module",
+  "devDependencies": {
+    "@types/bun": "latest",
+    "@types/fs-extra": "^11.0.4"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "fs-extra": "^11.3.0",
+    "simple-git": "^3.27.0",
+    "webcrack": "^2.15.1"
+  }
+}
