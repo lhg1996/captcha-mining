@@ -2,8 +2,8 @@ name: Mine
 
 on:
   schedule:
-    - cron: "22 * * * *"
-  workflow_dispatch:
+    - cron: "22 * * * *" # 每小时的第 22 分钟执行
+  workflow_dispatch: # 手动触发
 
 permissions:
   contents: write
@@ -16,7 +16,8 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v3
 
-    - uses: oven-sh/setup-bun@v2
+    - name: Set up Bun
+      uses: oven-sh/setup-bun@v2
 
     - name: Set up Git
       run: |
@@ -28,11 +29,16 @@ jobs:
         cd scripts
         bun i
         bun run src/index.ts
-
       env:
         DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
 
-    - name: Push changes
-      run: git push
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    - name: Commit and Push changes
+      run: |
+        git pull origin $(git rev-parse --abbrev-ref HEAD) --rebase
+        git add .
+        if git diff --cached --quiet; then
+          echo "No changes to commit"
+        else
+          git commit -m "Automated data update"
+          git push https://${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git HEAD:main
+        fi
