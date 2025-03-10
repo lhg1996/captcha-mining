@@ -32,7 +32,8 @@ export async function updateHCaptcha() {
   }
 
   const versionDir = path.join(dir, "archive", version);
-  if (await fs.pathExists(versionDir)) {
+  const current = path.join(dir, "current");
+  if (await fs.pathExists(versionDir) && await fs.pathExists(current)) {
     console.log("Already got this version");
     return;
   }
@@ -43,7 +44,6 @@ export async function updateHCaptcha() {
   await fs.writeFile(path.join(versionDir, "api.js"), text);
   await fs.writeFile(path.join(versionDir, "api.clean.js"), cleaned);
 
-  const current = path.join(dir, "current");
   await fs.ensureDir(current);
   await fs.writeFile(path.join(current, "api.js"), text);
   await fs.writeFile(path.join(current, "api.clean.js"), cleaned);
